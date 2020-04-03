@@ -1,0 +1,598 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Bossabox Backend Challenge API",
+    "version": "1.0.0",
+    "title": "VUTTR API",
+    "contact": {
+      "email": "orlandosjm@yahoo.com.br"
+    },
+    "license": {
+      "name": "MIT Licence",
+      "url": "https://mit-license.org"
+    }
+  },
+  "tags": [
+    {
+      "name": "users",
+      "description": "Operations available to any user"
+    },
+    {
+      "name": "authUsers",
+      "description": "Operations available to authenticated users"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "get": {
+          "tags": [
+            "authUsers"
+          ],
+          "summary": "searches users",
+          "operationId": "searchUser",
+          "description": "You can search for all available users in the system",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "none",
+              "description": "No parameter is required"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref":"#/definitions/userGetRes"
+              }
+            },
+            "400": {
+              "description": "Bad request"
+            },
+            "401": {
+              "description": "Unauthorized (User not logged in)"
+            },
+            "500": {
+              "description": "Internal server error"
+            }
+          }
+      },
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "adds an user",
+        "operationId": "addUser",
+        "description": "Adds an user to the system",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "description": "User to add",
+            "schema": {
+              "$ref": "#/definitions/userPostReq"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/userPostRes"
+            }
+          },
+          "400": {
+            "description": "Bad request, Field is required (if any field is missing), Password must be at least 6 digits long"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/users:id":{
+      "put": {
+        "tags": [
+          "authUsers"
+        ],
+        "summary": "Updates an user (name, email, password)",
+        "operationId": "updateUser",
+        "description": "An user can update his/her own data. If oldPassword field is filled, API will save password as the new one.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "The user's id"
+          },
+          {
+            "in": "body",
+            "name": "user",
+            "description": "New user's data. If oldPassword is empty API will check for the password and save data. Otherwise, API will check for the oldPassword and save data, including the new password (in the password field)",
+            "schema": {
+              "$ref": "#/definitions/userPutReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/userPutRes"
+            }
+          },
+          "400": {
+            "description": "Bad request (wrong id), Field is required (If any field is missing)"
+          },
+          "401": {
+            "description": "Unauthorized (User not logged in)"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/sessions": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "creates an user's session",
+        "operationId": "addSession",
+        "description": "Let an user be authenticated",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "session",
+            "description": "User to login",
+            "schema": {
+              "$ref": "#/definitions/sessionPostReq"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "item created",
+            "schema": {
+              "$ref": "#/definitions/sessionPostRes"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Incorrect password"
+          },
+          "404": {
+            "description": "User not found (for a wrong email)"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/tools": {
+      "get": {
+          "tags": [
+            "authUsers"
+          ],
+          "summary": "searches tools",
+          "operationId": "searchTool",
+          "description": "You can search for either all available tools in the system or for tools by a specific tag",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "query",
+              "name": "tool",
+              "description": "Optional. /tools?tag=node",
+              "schema": {
+                "type":"string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref":"#/definitions/toolGetRes"
+              }
+            },
+            "400": {
+              "description": "Bad request"
+            },
+            "401": {
+              "description": "Unauthorized (User not logged in)"
+            },
+            "500": {
+              "description": "Internal server error"
+            }
+          }
+      },
+      "post": {
+        "tags": [
+          "authUsers"
+        ],
+        "summary": "adds a tool",
+        "operationId": "addUser",
+        "description": "Adds a tool to the system",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "tool",
+            "description": "Tool to add",
+            "schema": {
+              "$ref": "#/definitions/toolPostReq"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/toolPostRes"
+            }
+          },
+          "400": {
+            "description": "Bad request, Field is required (if any field is missing), At least one tag is requeired"
+          },
+          "401": {
+            "description": "Unauthorized (User not logged in)"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/tools:id": {
+      "delete": {
+        "tags": [
+          "authUsers"
+        ],
+        "summary": "Deletes a tool",
+        "operationId": "deleteTool",
+        "description": "Deletes a tool in the system",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "none",
+            "name": "Tool",
+            "description": "No parameter is required"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content",
+            "schema": {
+              "$ref":"#/definitions/toolDeleteRes"
+            }
+          },
+          "400": {
+            "description": "Bad request (wrong id)"
+          },
+          "401": {
+            "description": "Unauthorized (User not logged in)"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "sessionPostReq": {
+      "type": "object",
+      "required": [
+        "email",
+        "password"
+      ],
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "willHenry@gmail.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "123456"
+        }
+      }
+    },
+    "sessionPostRes": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "token"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": "1"
+        },
+        "name": {
+          "type": "string",
+          "example": "William Henry"
+        },
+        "token": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNTg1NTAzNzY1LCJleHAiOjE1ODYxMDg1NjV9.xE-qRi3XX5Ge5h_FN7RCIGmwKFnzVZvSbdJQBV-88Co"
+        }
+      }
+    },
+    "userPostReq": {
+      "type": "object",
+      "required": [
+        "name",
+        "email",
+        "password"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "William Henry"
+        },
+        "email": {
+          "type": "string",
+          "example": "willHenry@gmail.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "123456"
+        }
+      }
+    },
+    "userPostRes": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "email"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32",
+          "example": "1"
+        },
+        "name": {
+          "type": "string",
+          "example": "William Henry"
+        },
+        "email": {
+          "type": "string",
+          "example": "willHenry@gmail.com"
+        }
+      }
+    },
+    "userPutReq": {
+      "type": "object",
+      "required": [
+        "name",
+        "email",
+        "oldPassword",
+        "password"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "William Henry"
+        },
+        "email": {
+          "type": "string",
+          "example": "willHenry@gmail.com"
+        },
+        "oldPassword": {
+          "type": "string",
+          "example": ""
+        },
+        "password": {
+          "type": "string",
+          "example": "123456"
+        }
+      }
+    },
+    "userPutRes": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "email"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32",
+          "example": "1"
+        },
+        "name": {
+          "type": "string",
+          "example": "William Henry"
+        },
+        "email": {
+          "type": "string",
+          "example": "willHenry@gmail.com"
+        }
+      }
+    },
+    "userGetRes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type":"integer"},
+          "name": {"type":"string"},
+          "email": {"type":"string"}
+        }
+      },
+      "example": [
+        {
+          "id":1,
+          "name": "William Henry",
+          "email": "willHenry@gmail.com"
+        },
+        {
+          "id":2,
+          "name": "Bill Gates",
+          "email": "billG@hotmail.com"
+        }
+      ]
+    },
+    "toolPostReq": {
+      "type": "object",
+      "required": [
+        "title",
+        "link",
+        "description",
+        "tags"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "hotel"
+        },
+        "link": {
+          "type": "string",
+          "example": "https://github.com/typicode/hotel"
+        },
+        "description": {
+          "type": "string",
+          "example": "Local app manager. Start apps within your browser, developer tool with local .localhost domain and https out of the box."
+        },
+        "tags": {
+          "type": "array",
+          "itens": {
+            "type":"string"
+          },
+          "example": ["node", "organizing", "webapps", "domain", "developer", "https", "proxy"]
+        }
+      }
+    },
+    "toolPostRes": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "link",
+        "description",
+        "tags"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32",
+          "example": 5
+        },
+        "title": {
+          "type": "string",
+          "example": "hotel"
+        },
+        "link": {
+          "type": "string",
+          "example": "https://github.com/typicode/hotel"
+        },
+        "description": {
+          "type": "string",
+          "example": "Local app manager. Start apps within your browser, developer tool with local .localhost domain and https out of the box."
+        },
+        "tags": {
+          "type": "array",
+          "itens": {
+            "type":"string"
+          },
+          "example": ["node", "organizing", "webapps", "domain", "developer", "https", "proxy"]
+        }
+      }
+    },
+    "toolGetRes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type":"integer"},
+          "title": {"type":"string"},
+          "link": {"type":"string"},
+          "description": {"type":"string"},
+          "tags": {
+            "type":"string",
+            "itens": {
+              "type":"string"
+            }
+          }
+        }
+      },
+      "example": [
+        {
+          "id": 2,
+          "title": "json-server",
+          "link": "https://github.com/typicode/json-server",
+          "description": "Fake REST API based on a json schema. Useful for mocking and creating APIs for front-end devs to consume in coding challenges.",
+          "tags": [
+              "api",
+              "json",
+              "schema",
+              "node",
+              "github",
+              "rest"
+          ]
+      },
+      {
+          "id": 3,
+          "title": "fastify",
+          "link": "https://www.fastify.io/",
+          "description": "Extremely fast and simple, low-overhead web framework for NodeJS. Supports HTTP2.",
+          "tags": [
+              "web",
+              "framework",
+              "node",
+              "http2",
+              "https",
+              "localhost"
+          ]
+      }
+      ]
+    },
+    "toolDeleteRes": {
+      "type": "object",
+      "required": [
+        "msg"
+      ],
+      "properties": {
+        "msg": {
+          "type": "string",
+          "example": "Tool deleted"
+        }
+      }
+    }
+  }
+}

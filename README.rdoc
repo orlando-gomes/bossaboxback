@@ -1,0 +1,15 @@
+Com sequelize, bcryptjs já incluídos.
+
+Migrations:
+$ yarn sequelize migration:create --name=create-users
+
+
+- Para utilizar a API em máquina local,  clonar o projeto,
+  apagar o yarn.lock e usar o comando $ yarn com o terminal
+  dentro da pasta do projeto para instalar as dependências;
+- Para iniciar o servidor, usar o comando $ yarn dev dentro
+  da pasta do projeto;
+- Para acessar a documentação, inicial o servidor e usar a
+  url "http://localhost:3000/api-docs/" no navegador da sua
+  preferência;
+-
