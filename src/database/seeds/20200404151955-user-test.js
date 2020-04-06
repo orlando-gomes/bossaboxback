@@ -1,5 +1,4 @@
-// must delete this one, after use the code here
-// $ yarn sequelize seed:generate --name admin-user
+// $ yarn sequelize seed:generate --name user-test
 // $ yarn sequelize db:seed:all
 const bcrypt = require('bcryptjs');
 
@@ -9,8 +8,8 @@ module.exports = {
       'users',
       [
         {
-          name: 'Distribuidora FastFeet',
-          email: 'admin@fastfeet.com',
+          name: 'UserTest',
+          email: 'usertest@gmail.com',
           password_hash: bcrypt.hashSync('123456', 8),
           created_at: new Date(),
           updated_at: new Date(),

@@ -1,15 +1,30 @@
-Com sequelize, bcryptjs já incluídos.
+API utilizando base de dados Postgres
+- username: 'postgres',
+- password: 'docker',
+- database: 'bossaboxback',
+Para mudar estas chaves, alterar o 'src/config/database.js'
 
-Migrations:
-$ yarn sequelize migration:create --name=create-users
 
 
-- Para utilizar a API em máquina local,  clonar o projeto,
-  apagar o yarn.lock e usar o comando $ yarn com o terminal
-  dentro da pasta do projeto para instalar as dependências;
+
+- Para utilizar a API em máquina local,  clonar o projeto e
+  usar o comando $ yarn com o terminal dentro da pasta do
+  projeto para instalar as dependências;
 - Para iniciar o servidor, usar o comando $ yarn dev dentro
   da pasta do projeto;
 - Para acessar a documentação, inicial o servidor e usar a
   url "http://localhost:3000/api-docs/" no navegador da sua
   preferência;
--
+- Migration para criar tabela de usuários com comando
+  $ yarn sequelize migration:create --name=create-users
+- Seed para criar um usuário teste no banco de dados com
+  comando $ yarn sequelize db:seed:all
+- O usuário incluído com este seed é
+    name: 'UserTest'
+    email: 'usertest@gmail.com'
+    password: '123456'
+- Migration para criar tabela de ferramentas com comando
+  $ yarn sequelize migration:create --name=create-tools
+
+
+

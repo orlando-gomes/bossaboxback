@@ -3,12 +3,22 @@ import { Router } from 'express';
 import swaggerUi from 'swagger-ui-express';
 import * as swaggerDocument from '../swagger.json';
 
-const routs = new Router();
+import authMiddleware from './app/middlewares/auth';
 
-routs.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+import UserController from './app/controllers/UserController';
+import SessionController from './app/controllers/SessionController';
 
-routs.get('/', (req, res) => {
-  return res.json({ msg: 'Hello world' });
-});
+const routes = new Router();
 
-export default routs;
+routes.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+routes.post('/users', UserController.store);
+routes.post('/sessions', SessionController.store);
+
+routes.use(authMiddleware);
+
+routes.get('/users', UserController.index);
+routes.get('/users/:id', UserController.show);
+routes.put('/users/:id', UserController.update);
+
+export default routes;

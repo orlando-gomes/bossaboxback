@@ -29,7 +29,7 @@
             "authUsers"
           ],
           "summary": "searches users",
-          "operationId": "searchUser",
+          "operationId": "searchUsers",
           "description": "You can search for all available users in the system",
           "produces": [
             "application/json"
@@ -44,7 +44,7 @@
             "200": {
               "description": "OK",
               "schema": {
-                "$ref":"#/definitions/userGetRes"
+                "$ref":"#/definitions/usersGetRes"
               }
             },
             "400": {
@@ -89,7 +89,7 @@
             }
           },
           "400": {
-            "description": "Bad request, Field is required (if any field is missing), Password must be at least 6 digits long"
+            "description": "Bad request, Field is required (if any field is missing), Password must be at least 6 digits long, Email has been already used (Email must be unique)"
           },
           "500": {
             "description": "Internal server error"
@@ -98,6 +98,41 @@
       }
     },
     "/users:id":{
+      "get": {
+          "tags": [
+            "authUsers"
+          ],
+          "summary": "searches an user",
+          "operationId": "searchUser",
+          "description": "You can search a specific user in the system",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "description": "The user's id"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref":"#/definitions/userGetRes"
+              }
+            },
+            "400": {
+              "description": "Bad request"
+            },
+            "401": {
+              "description": "Unauthorized (User not logged in)"
+            },
+            "500": {
+              "description": "Internal server error"
+            }
+          }
+      },
       "put": {
         "tags": [
           "authUsers"
@@ -120,9 +155,16 @@
           {
             "in": "body",
             "name": "user",
-            "description": "New user's data. If oldPassword is empty API will check for the password and save data. Otherwise, API will check for the oldPassword and save data, including the new password (in the password field)",
+            "description": "New user's data. User can either update name and email or password. The first case you send an object {name, email, password}. API will check for password and save data. The second case you send an object {oldPassword, password, confirmPassword}. API will check for the oldPassword and save the new password, in the password field",
             "schema": {
-              "$ref": "#/definitions/userPutReq"
+              "allOf": [
+                {
+                  "$ref": "#/definitions/userPutRes"
+                },
+                {
+                  "$ref": "#/definitions/userPutReq"
+                }
+              ]
             }
           }
         ],
@@ -137,7 +179,7 @@
             "description": "Bad request (wrong id), Field is required (If any field is missing)"
           },
           "401": {
-            "description": "Unauthorized (User not logged in)"
+            "description": "Unauthorized (User not logged in), Invalid password"
           },
           "500": {
             "description": "Internal server error"
@@ -396,31 +438,29 @@
       }
     },
     "userPutReq": {
-      "type": "object",
-      "required": [
-        "name",
-        "email",
-        "oldPassword",
-        "password"
-      ],
-      "properties": {
-        "name": {
-          "type": "string",
-          "example": "William Henry"
-        },
-        "email": {
-          "type": "string",
-          "example": "willHenry@gmail.com"
-        },
-        "oldPassword": {
-          "type": "string",
-          "example": ""
-        },
-        "password": {
-          "type": "string",
-          "example": "123456"
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type":"string"},
+          "email": {"type":"string"},
+          "oldPassword": {"type":"string"},
+          "password": {"type":"string"},
+          "confirmPassword": {"type":"string"}
         }
-      }
+      },
+      "example": [
+        {
+          "name": "William Henry",
+          "email": "willHenry@gmail.com",
+          "password": "123456"
+        },
+        {
+          "oldPassword": "123456",
+          "password": "142857",
+          "confirmPassword": "142857"
+        }
+      ]
     },
     "userPutRes": {
       "type": "object",
@@ -445,7 +485,7 @@
         }
       }
     },
-    "userGetRes": {
+    "usersGetRes": {
       "type": "array",
       "items": {
         "type": "object",
@@ -467,6 +507,29 @@
           "email": "billG@hotmail.com"
         }
       ]
+    },
+    "userGetRes": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "email"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32",
+          "example": 1
+        },
+        "name": {
+          "type": "string",
+          "example": "William Henry"
+        },
+        "email": {
+          "type": "string",
+          "example": "willHenry@gmail.com"
+        }
+      }
     },
     "toolPostReq": {
       "type": "object",
