@@ -47,9 +47,6 @@
                 "$ref":"#/definitions/usersGetRes"
               }
             },
-            "400": {
-              "description": "Bad request"
-            },
             "401": {
               "description": "Unauthorized (User not logged in)"
             },
@@ -123,7 +120,7 @@
               }
             },
             "400": {
-              "description": "Bad request"
+              "description": "Bad request. Invalid id"
             },
             "401": {
               "description": "Unauthorized (User not logged in)"
@@ -176,7 +173,7 @@
             }
           },
           "400": {
-            "description": "Bad request (wrong id), Field is required (If any field is missing)"
+            "description": "Bad request. Invalid id. Name and email are required. Password's validation failed. Email already exists."
           },
           "401": {
             "description": "Unauthorized (User not logged in), Invalid password"
@@ -219,7 +216,7 @@
             }
           },
           "400": {
-            "description": "Bad request"
+            "description": "Bad request. Email and password are required"
           },
           "401": {
             "description": "Incorrect password"
@@ -258,11 +255,8 @@
             "200": {
               "description": "OK",
               "schema": {
-                "$ref":"#/definitions/toolGetRes"
+                "$ref":"#/definitions/toolsGetRes"
               }
-            },
-            "400": {
-              "description": "Bad request"
             },
             "401": {
               "description": "Unauthorized (User not logged in)"
@@ -322,25 +316,19 @@
         "summary": "Deletes a tool",
         "operationId": "deleteTool",
         "description": "Deletes a tool in the system",
-        "produces": [
-          "application/json"
-        ],
         "parameters": [
           {
-            "in": "none",
-            "name": "Tool",
-            "description": "No parameter is required"
+            "in": "path",
+            "name": "id",
+            "description": "The tool's id"
           }
         ],
         "responses": {
           "204": {
-            "description": "No content",
-            "schema": {
-              "$ref":"#/definitions/toolDeleteRes"
-            }
+            "description": "No content"
           },
           "400": {
-            "description": "Bad request (wrong id)"
+            "description": "Invalid id"
           },
           "401": {
             "description": "Unauthorized (User not logged in)"
@@ -349,6 +337,108 @@
             "description": "Internal server error"
           }
         }
+      },
+      "get": {
+          "tags": [
+            "authUsers"
+          ],
+          "summary": "searches a tool",
+          "operationId": "searchATool",
+          "description": "You can search for a specific tool in the system or for tools by a specific tag",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "description": "The tool's id"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref":"#/definitions/toolGetRes"
+              }
+            },
+            "400": {
+              "description": "Invalid id"
+            },
+            "401": {
+              "description": "Unauthorized (User not logged in)"
+            },
+            "500": {
+              "description": "Internal server error"
+            }
+          }
+      }
+    },
+    "tags": {
+      "get": {
+          "tags": [
+            "authUsers"
+          ],
+          "summary": "searches tags",
+          "operationId": "searchTags",
+          "description": "You can search for all available tags in the system",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "none",
+              "description": "No parameter is required"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref":"#/definitions/tagsGetRes"
+              }
+            },
+            "401": {
+              "description": "Unauthorized (User not logged in)"
+            },
+            "500": {
+              "description": "Internal server error"
+            }
+          }
+      }
+    },
+    "tags:id": {
+      "get": {
+          "tags": [
+            "authUsers"
+          ],
+          "summary": "searches a tag",
+          "operationId": "searchTag",
+          "description": "You can search for a specific in the system",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "description": "The tag's id"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref":"#/definitions/tagGetRes"
+              }
+            },
+            "401": {
+              "description": "Unauthorized (User not logged in)"
+            },
+            "500": {
+              "description": "Internal server error"
+            }
+          }
       }
     }
   },
@@ -597,7 +687,7 @@
         }
       }
     },
-    "toolGetRes": {
+    "toolsGetRes": {
       "type": "array",
       "items": {
         "type": "object",
@@ -645,17 +735,65 @@
       }
       ]
     },
-    "toolDeleteRes": {
+    "toolGetRes": {
       "type": "object",
-      "required": [
-        "msg"
-      ],
-      "properties": {
-        "msg": {
-          "type": "string",
-          "example": "Tool deleted"
+        "properties": {
+          "id": {"type":"integer"},
+          "title": {"type":"string"},
+          "link": {"type":"string"},
+          "description": {"type":"string"},
+          "tags": {
+            "type":"string",
+            "itens": {
+              "type":"string"
+            }
+          }
+        },
+      "example": {
+      "id": 2,
+      "title": "json-server",
+      "link": "https://github.com/typicode/json-server",
+      "description": "Fake REST API based on a json schema. Useful for mocking and creating APIs for front-end devs to consume in coding challenges.",
+      "tags": [
+          "api",
+          "json",
+          "schema",
+          "node",
+          "github",
+          "rest"
+      ]
+    }
+    },
+    "tagsGetRes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type":"integer"},
+          "title": {"type":"string"}
         }
-      }
+      },
+      "example": [
+        {
+          "id": 2,
+          "title": "json"
+        },
+        {
+            "id": 3,
+            "title": "node"
+        }
+      ]
+    },
+    "tagGetRes": {
+      "type": "object",
+        "properties": {
+          "id": {"type":"integer"},
+          "title": {"type":"string"}
+        },
+      "example": {
+      "id": 2,
+      "title": "json-server"
+    }
     }
   }
 }

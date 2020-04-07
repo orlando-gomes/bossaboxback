@@ -7,6 +7,8 @@ import authMiddleware from './app/middlewares/auth';
 
 import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionController';
+import TagController from './app/controllers/TagController';
+import ToolController from './app/controllers/ToolController';
 
 const routes = new Router();
 
@@ -20,5 +22,13 @@ routes.use(authMiddleware);
 routes.get('/users', UserController.index);
 routes.get('/users/:id', UserController.show);
 routes.put('/users/:id', UserController.update);
+
+routes.get('/tags', TagController.index);
+routes.get('/tags/:id', TagController.show);
+
+routes.get('/tools', ToolController.index);
+routes.get('/tools/:id', ToolController.show);
+routes.post('/tools/', ToolController.store);
+routes.delete('/tools/:id', ToolController.delete);
 
 export default routes;

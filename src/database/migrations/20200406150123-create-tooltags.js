@@ -1,24 +1,23 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('tools', {
+    return queryInterface.createTable('tooltags', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
       },
-      title: {
-        type: Sequelize.STRING,
+      toolid: {
+        type: Sequelize.INTEGER,
         allowNull: false,
+        references: { model: 'tools', key: 'id' },
+        onDelete: 'CASCADE',
       },
-      link: {
-        type: Sequelize.STRING,
+      tagid: {
+        type: Sequelize.INTEGER,
         allowNull: false,
-        unique: true,
-      },
-      description: {
-        type: Sequelize.TEXT,
-        allowNull: false,
+        references: { model: 'tags', key: 'id' },
+        onDelete: 'CASCADE',
       },
       created_at: {
         type: Sequelize.DATE,
@@ -32,6 +31,6 @@ module.exports = {
   },
 
   down: queryInterface => {
-    return queryInterface.dropTable('tools');
+    return queryInterface.dropTable('tooltags');
   },
 };
