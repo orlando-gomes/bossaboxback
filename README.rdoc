@@ -26,3 +26,4 @@ Para mudar estas chaves, alterar o 'src/config/database.js'
 - Migration para criar tabela de ferramentas com comando
   $ yarn sequelize migration:create --name=create-tools
 
+

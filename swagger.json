@@ -406,40 +406,6 @@
             }
           }
       }
-    },
-    "tags:id": {
-      "get": {
-          "tags": [
-            "authUsers"
-          ],
-          "summary": "searches a tag",
-          "operationId": "searchTag",
-          "description": "You can search for a specific in the system",
-          "produces": [
-            "application/json"
-          ],
-          "parameters": [
-            {
-              "in": "path",
-              "name": "id",
-              "description": "The tag's id"
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "schema": {
-                "$ref":"#/definitions/tagGetRes"
-              }
-            },
-            "401": {
-              "description": "Unauthorized (User not logged in)"
-            },
-            "500": {
-              "description": "Internal server error"
-            }
-          }
-      }
     }
   },
   "definitions": {
@@ -783,17 +749,6 @@
             "title": "node"
         }
       ]
-    },
-    "tagGetRes": {
-      "type": "object",
-        "properties": {
-          "id": {"type":"integer"},
-          "title": {"type":"string"}
-        },
-      "example": {
-      "id": 2,
-      "title": "json-server"
-    }
     }
   }
 }

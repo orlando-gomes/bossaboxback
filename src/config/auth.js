@@ -1,6 +1,7 @@
-// change the code here to generate your app's the token
+import 'dotenv/config';
+
 export default {
-  generator: 'bossaboxback',
-  secret: 'bcd5625aed68e8656057a80a1e9d32e3',
+  generator: process.env.APP_GENERATOR,
+  secret: process.env.APP_SECRET,
   expiresIn: '7d',
 };

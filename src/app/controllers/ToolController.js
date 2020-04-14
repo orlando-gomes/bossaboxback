@@ -170,7 +170,7 @@ class ToolController {
 
     tool.destroy();
 
-    return res.status(204);
+    return res.status(204).json({ msg: 'Deleted' });
   }
 }
 

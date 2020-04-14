@@ -24,7 +24,6 @@ routes.get('/users/:id', UserController.show);
 routes.put('/users/:id', UserController.update);
 
 routes.get('/tags', TagController.index);
-routes.get('/tags/:id', TagController.show);
 
 routes.get('/tools', ToolController.index);
 routes.get('/tools/:id', ToolController.show);
