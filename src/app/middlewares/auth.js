@@ -6,6 +6,7 @@ export default async (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
+    console.log('Authorization');
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
