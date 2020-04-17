@@ -14,6 +14,10 @@ const routes = new Router();
 
 routes.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+routes.get('/', (req, res) => {
+  return res.json({ msg: 'Bossaboxback operating!' });
+});
+
 routes.post('/users', UserController.store);
 routes.post('/sessions', SessionController.store);
 
