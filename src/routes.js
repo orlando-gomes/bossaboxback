@@ -15,7 +15,6 @@ const routes = new Router();
 routes.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 routes.get('/', (req, res) => {
-  console.log('Rota geral de teste');
   return res.json({ msg: 'Bossaboxback operating!' });
 });
 
