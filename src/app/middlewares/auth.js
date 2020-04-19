@@ -3,7 +3,6 @@ import { promisify } from 'util';
 import authConfig from '../../config/auth';
 
 export default async (req, res, next) => {
-  /*
   const { authorization } = req.headers;
 
   if (!authorization) {
@@ -19,6 +18,6 @@ export default async (req, res, next) => {
   } catch (err) {
     return res.status(401).json('Unauthorized');
   }
-  */
+
   return next();
 };
