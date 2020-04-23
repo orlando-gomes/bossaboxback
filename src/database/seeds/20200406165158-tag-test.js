@@ -4,12 +4,12 @@ module.exports = {
       'tags',
       [
         {
-          title: 'PHP',
+          title: 'php',
           created_at: new Date(),
           updated_at: new Date(),
         },
         {
-          title: 'C++',
+          title: 'ruby',
           created_at: new Date(),
           updated_at: new Date(),
         },
