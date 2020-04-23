@@ -8,7 +8,7 @@ module.exports = {
       [
         {
           title: 'Hotel',
-          link: 'https://github.com',
+          link: 'https://github.com/hotel',
           description: 'A tool created only for testing de API',
           created_at: new Date(),
           updated_at: new Date(),
