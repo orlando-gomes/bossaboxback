@@ -2,14 +2,14 @@ import Tag from '../models/Tag';
 
 class TagController {
   async store(aTag) {
-    const tagExists = await Tag.findOne({
+    const tagAlreadyExists = await Tag.findOne({
       where: {
         title: aTag,
       },
     });
 
-    if (tagExists) {
-      return { id: tagExists.id, title: aTag };
+    if (tagAlreadyExists) {
+      return { id: tagAlreadyExists.id, title: aTag };
     }
 
     const { id, title } = await Tag.create({ title: aTag });

@@ -2,9 +2,9 @@ import Tooltag from '../models/Tooltag';
 import Tag from '../models/Tag';
 
 class TooltagServices {
-  async fetchTagNamesBelongTool(toolId) {
+  async fetchTagNamesBelongingATool(toolid) {
     const tooltags = await Tooltag.findAll({
-      where: { toolid: toolId },
+      where: { toolid },
       attributes: [],
       include: [
         {

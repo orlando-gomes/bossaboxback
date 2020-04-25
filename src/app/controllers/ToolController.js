@@ -55,16 +55,15 @@ class ToolController {
 
     const { id, title, link, description } = await Tool.create(req.body);
 
-    const saveTagsAsynchronously = async () =>
-      Promise.all(
-        req.body.tags.map(async tagName => {
-          const tagSaved = await TagController.store(tagName);
-          return { id: tagSaved.id, title: tagSaved.title };
-        })
-      );
+    const tagsSaved = await Promise.all(
+      req.body.tags.map(async tagName => {
+        const tagSaved = await TagController.store(tagName.toLowerCase());
+        return { id: tagSaved.id, title: tagSaved.title };
+      })
+    );
 
-    saveTagsAsynchronously().then(tagsSaved => {
-      const tags = tagsSaved.map(tagSaved => {
+    const tags = await Promise.all(
+      tagsSaved.map(tagSaved => {
         if (tagSaved.id) {
           Tooltag.create({
             toolid: id,
@@ -73,78 +72,56 @@ class ToolController {
           return tagSaved.title;
         }
         return false;
-      });
+      })
+    );
 
-      return res.json({ id, title, link, description, tags });
-    });
+    return res.json({ id, title, link, description, tags });
   }
 
   // eslint-disable-next-line consistent-return
   async index(req, res) {
-    let tools = [];
+    let wantedTools = [];
 
-    if (req.query.tag) {
-      const tagByName = await Tag.findOne({
+    const searchingByTag = req.query.tag;
+
+    if (searchingByTag) {
+      const tagExists = await Tag.findOne({
         where: {
-          title: req.query.tag,
+          title: searchingByTag.toLowerCase(),
         },
       });
-      if (!tagByName) {
+      if (!tagExists) {
         return res.json([]);
       }
 
       const arrayOfToolsIds = await TooltagServices.arrayIdsOfToolsThatHaveTag(
-        tagByName.id
+        tagExists.id
       );
 
-      const getToolsAsynchronously = async () =>
-        Promise.all(
-          arrayOfToolsIds.map(async toolId => {
-            const { id, title, link, description } = await Tool.findByPk(
-              toolId
-            );
+      wantedTools = await Promise.all(
+        arrayOfToolsIds.map(async toolId => {
+          const { id, title, link, description } = await Tool.findByPk(toolId);
 
-            return { id, title, link, description };
-          })
-        );
-
-      getToolsAsynchronously().then(arrayOfTools => {
-        tools = arrayOfTools;
-
-        const getTagsAsynchronously = async () =>
-          Promise.all(
-            tools.map(async tool => {
-              const { id, title, link, description } = tool;
-
-              const tags = await TooltagServices.fetchTagNamesBelongTool(id);
-              return { id, title, link, description, tags };
-            })
-          );
-
-        getTagsAsynchronously().then(toolsWithTags => {
-          return res.json(toolsWithTags);
-        });
+          return { id, title, link, description };
+        })
+      );
+    } else {
+      // If we're not seraching by tag
+      wantedTools = await Tool.findAll({
+        attributes: ['id', 'title', 'link', 'description'],
       });
     }
 
-    // If there is no query tag
-    tools = await Tool.findAll({
-      attributes: ['id', 'title', 'link', 'description'],
-    });
+    const wantedToolsWithTags = await Promise.all(
+      wantedTools.map(async tool => {
+        const { id, title, link, description } = tool;
 
-    const getTagsAsynchronously = async () =>
-      Promise.all(
-        tools.map(async tool => {
-          const { id, title, link, description } = tool;
+        const tags = await TooltagServices.fetchTagNamesBelongingATool(id);
+        return { id, title, link, description, tags };
+      })
+    );
 
-          const tags = await TooltagServices.fetchTagNamesBelongTool(id);
-          return { id, title, link, description, tags };
-        })
-      );
-
-    getTagsAsynchronously().then(toolsWithTags => {
-      return res.json(toolsWithTags);
-    });
+    return res.json(wantedToolsWithTags);
   }
 
   async show(req, res) {
@@ -156,7 +133,7 @@ class ToolController {
 
     const { id, title, link, description } = tool;
 
-    const tags = await TooltagServices.fetchTagNamesBelongTool(id);
+    const tags = await TooltagServices.fetchTagNamesBelongingATool(id);
 
     return res.json({ id, title, link, description, tags });
   }
