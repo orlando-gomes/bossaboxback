@@ -62,6 +62,7 @@ class ToolController {
       })
     );
 
+    // Creating relationship in Toolags table
     const tags = await Promise.all(
       tagsSaved.map(tagSaved => {
         if (tagSaved.id) {
