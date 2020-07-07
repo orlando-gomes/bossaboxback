@@ -80,7 +80,7 @@
         ],
         "responses": {
           "201": {
-            "description": "Created",
+            "description": "Created. The response always returns the parameter 'avatar_name' set as null. This parameter can be set later in 'put:users' method.",
             "schema": {
               "$ref": "#/definitions/userPostRes"
             }
@@ -152,7 +152,7 @@
           {
             "in": "body",
             "name": "user",
-            "description": "New user's data. User can either update name and email or password. The first case you send an object {name, email, password}. API will check for password and save data. The second case you send an object {oldPassword, password, confirmPassword}. API will check for the oldPassword and save the new password, in the password field",
+            "description": "New user's data. User can either update name and email or name, email and password. The first case you send an object {name(optional), email(optional), password}. API will check for password and save data. The second case you send an object {name(optional), email(optional), oldPassword, password, confirmPassword}. API will check for the oldPassword and save the password field as the new password",
             "schema": {
               "allOf": [
                 {
@@ -431,6 +431,8 @@
       "required": [
         "id",
         "name",
+        "email",
+        "avatar_name",
         "token"
       ],
       "properties": {
@@ -441,6 +443,14 @@
         "name": {
           "type": "string",
           "example": "William Henry"
+        },
+        "email": {
+          "type": "string",
+          "example": "willHenry@gmail.com"
+        },
+        "avatar_name": {
+          "type": "string",
+          "example": "man1"
         },
         "token": {
           "type": "string",
@@ -475,7 +485,8 @@
       "required": [
         "id",
         "name",
-        "email"
+        "email",
+        "avatar_name"
       ],
       "properties": {
         "id": {
@@ -490,6 +501,10 @@
         "email": {
           "type": "string",
           "example": "willHenry@gmail.com"
+        },
+        "avatar_name": {
+          "type": "string",
+          "example": null
         }
       }
     },
@@ -523,7 +538,8 @@
       "required": [
         "id",
         "name",
-        "email"
+        "email",
+        "avatar_name"
       ],
       "properties": {
         "id": {
@@ -538,6 +554,10 @@
         "email": {
           "type": "string",
           "example": "willHenry@gmail.com"
+        },
+        "avatar_name": {
+          "type": "string",
+          "example": "man2"
         }
       }
     },
@@ -548,19 +568,22 @@
         "properties": {
           "id": {"type":"integer"},
           "name": {"type":"string"},
-          "email": {"type":"string"}
+          "email": {"type":"string"},
+          "avatar_name": {"type":"string"}
         }
       },
       "example": [
         {
           "id":1,
           "name": "William Henry",
-          "email": "willHenry@gmail.com"
+          "email": "willHenry@gmail.com",
+          "avatar_name": null
         },
         {
           "id":2,
           "name": "Bill Gates",
-          "email": "billG@hotmail.com"
+          "email": "billG@hotmail.com",
+          "avatar_name": "man2"
         }
       ]
     },
@@ -569,7 +592,8 @@
       "required": [
         "id",
         "name",
-        "email"
+        "email",
+        "avatar_name"
       ],
       "properties": {
         "id": {
@@ -584,6 +608,10 @@
         "email": {
           "type": "string",
           "example": "willHenry@gmail.com"
+        },
+        "avatar_name": {
+          "type": "string",
+          "example": "man1"
         }
       }
     },

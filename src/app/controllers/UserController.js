@@ -37,14 +37,14 @@ class UserController {
       return res.status(400).json({ error: 'Email has been already used' });
     }
 
-    const { id, name, email } = await User.create(req.body);
+    const { id, name, email, avatar_name } = await User.create(req.body);
 
-    return res.status(201).json({ id, name, email });
+    return res.status(201).json({ id, name, email, avatar_name });
   }
 
   async index(req, res) {
     const users = await User.findAll({
-      attributes: ['id', 'name', 'email'],
+      attributes: ['id', 'name', 'email', 'avatar_name'],
     });
 
     return res.json(users);
@@ -57,9 +57,9 @@ class UserController {
       return res.status(400).json({ error: 'Invalid id' });
     }
 
-    const { id, name, email } = user;
+    const { id, name, email, avatar_name } = user;
 
-    return res.json({ id, name, email });
+    return res.json({ id, name, email, avatar_name });
   }
 
   async update(req, res) {
@@ -110,9 +110,9 @@ class UserController {
       return res.status(400).json({ error: 'Email already exists' });
     }
 
-    const { id, name, email } = await user.update(req.body);
+    const { id, name, email, avatar_name } = await user.update(req.body);
 
-    return res.json({ id, name, email });
+    return res.json({ id, name, email, avatar_name });
   }
 }
 

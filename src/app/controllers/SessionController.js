@@ -31,7 +31,7 @@ class SessionController {
       return res.status(401).json({ error: 'Incorrect password' });
     }
 
-    const { id, name, email } = userExists;
+    const { id, name, email, avatar_name } = userExists;
 
     const token = jwt.sign({ id }, authConfig.secret, {
       expiresIn: authConfig.expiresIn,
@@ -42,6 +42,7 @@ class SessionController {
         id,
         name,
         email,
+        avatar_name,
         token,
       },
     });
