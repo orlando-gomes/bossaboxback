@@ -15,7 +15,7 @@
   "tags": [
     {
       "name": "users",
-      "description": "Operations available to any users"
+      "description": "Operations available to any user"
     },
     {
       "name": "authUsers",
