@@ -43,86 +43,96 @@ class ToolController {
       return res.status(400).json({ error: 'At least one tag is required' });
     }
 
-    const linkExists = await Tool.findOne({
-      where: {
-        link: req.body.link,
-      },
-    });
+    try {
+      const linkExists = await Tool.findOne({
+        where: {
+          link: req.body.link,
+        },
+      });
 
-    if (linkExists) {
-      return res.status(400).json({ error: 'Link has been already used' });
+      if (linkExists) {
+        return res.status(400).json({ error: 'Link has been already used' });
+      }
+
+      const { id, title, link, description } = await Tool.create(req.body);
+
+      const tagsSaved = await Promise.all(
+        req.body.tags.map(async tagName => {
+          const tagSaved = await TagController.store(tagName.toLowerCase());
+          return { id: tagSaved.id, title: tagSaved.title };
+        })
+      );
+
+      // Creating relationship in Toolags table
+      const tags = await Promise.all(
+        tagsSaved.map(tagSaved => {
+          if (tagSaved.id) {
+            Tooltag.create({
+              toolid: id,
+              tagid: tagSaved.id,
+            });
+            return tagSaved.title;
+          }
+          return false;
+        })
+      );
+
+      return res.json({ id, title, link, description, tags });
+    } catch (err) {
+      return res.status(500).json({ error: 'Internal server error' });
     }
-
-    const { id, title, link, description } = await Tool.create(req.body);
-
-    const tagsSaved = await Promise.all(
-      req.body.tags.map(async tagName => {
-        const tagSaved = await TagController.store(tagName.toLowerCase());
-        return { id: tagSaved.id, title: tagSaved.title };
-      })
-    );
-
-    // Creating relationship in Toolags table
-    const tags = await Promise.all(
-      tagsSaved.map(tagSaved => {
-        if (tagSaved.id) {
-          Tooltag.create({
-            toolid: id,
-            tagid: tagSaved.id,
-          });
-          return tagSaved.title;
-        }
-        return false;
-      })
-    );
-
-    return res.json({ id, title, link, description, tags });
   }
 
   // eslint-disable-next-line consistent-return
   async index(req, res) {
-    let wantedTools = [];
+    try {
+      let wantedTools = [];
 
-    const searchingByTag = req.query.tag;
+      const searchingByTag = req.query.tag;
 
-    if (searchingByTag) {
-      const tagExists = await Tag.findOne({
-        where: {
-          title: searchingByTag.toLowerCase(),
-        },
-      });
-      if (!tagExists) {
-        return res.json([]);
+      if (searchingByTag) {
+        const tagExists = await Tag.findOne({
+          where: {
+            title: searchingByTag.toLowerCase(),
+          },
+        });
+        if (!tagExists) {
+          return res.json([]);
+        }
+
+        const arrayOfToolsIds = await TooltagServices.arrayIdsOfToolsThatHaveTag(
+          tagExists.id
+        );
+
+        wantedTools = await Promise.all(
+          arrayOfToolsIds.map(async toolId => {
+            const { id, title, link, description } = await Tool.findByPk(
+              toolId
+            );
+
+            return { id, title, link, description };
+          })
+        );
+      } else {
+        // If we're not seraching by tag
+        wantedTools = await Tool.findAll({
+          attributes: ['id', 'title', 'link', 'description'],
+        });
       }
 
-      const arrayOfToolsIds = await TooltagServices.arrayIdsOfToolsThatHaveTag(
-        tagExists.id
-      );
+      const wantedToolsWithTags = await Promise.all(
+        wantedTools.map(async tool => {
+          const { id, title, link, description } = tool;
 
-      wantedTools = await Promise.all(
-        arrayOfToolsIds.map(async toolId => {
-          const { id, title, link, description } = await Tool.findByPk(toolId);
-
-          return { id, title, link, description };
+          const tags = await TooltagServices.fetchTagNamesBelongingATool(id);
+          return { id, title, link, description, tags };
         })
       );
-    } else {
-      // If we're not seraching by tag
-      wantedTools = await Tool.findAll({
-        attributes: ['id', 'title', 'link', 'description'],
-      });
+
+      return res.json(wantedToolsWithTags);
+    } catch (err) {
+      return res.status(500).json({ error: 'Internal server error' });
     }
-
-    const wantedToolsWithTags = await Promise.all(
-      wantedTools.map(async tool => {
-        const { id, title, link, description } = tool;
-
-        const tags = await TooltagServices.fetchTagNamesBelongingATool(id);
-        return { id, title, link, description, tags };
-      })
-    );
-
-    return res.json(wantedToolsWithTags);
   }
 
   async show(req, res) {
@@ -147,6 +157,8 @@ class ToolController {
     }
 
     tool.destroy();
+
+    TooltagServices.purgeTagTable();
 
     return res.status(204).json({ msg: 'Deleted' });
   }

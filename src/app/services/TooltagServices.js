@@ -28,6 +28,24 @@ class TooltagServices {
 
     return arrayOfTools;
   }
+
+  async purgeTagTable() {
+    const tags = await Tag.findAll({
+      attributes: ['id', 'title'],
+    });
+
+    Promise.all(
+      tags.forEach(async tag => {
+        const tg = await Tooltag.findOne({
+          where: { tagid: tag.id },
+        });
+
+        if (!tg) {
+          tag.destroy();
+        }
+      })
+    );
+  }
 }
 
 export default new TooltagServices();

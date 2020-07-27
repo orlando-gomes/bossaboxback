@@ -381,7 +381,7 @@
           ],
           "summary": "searches tags",
           "operationId": "searchTags",
-          "description": "You can search for all available tags in the system",
+          "description": "You can search for all available tags in the system. Only tags effectively used will return.",
           "produces": [
             "application/json"
           ],
@@ -507,6 +507,7 @@
           "example": null
         }
       }
+
     },
     "userPutReq": {
       "type": "array",

@@ -27,19 +27,23 @@ class UserController {
       });
     }
 
-    const userExists = await User.findOne({
-      where: {
-        email: req.body.email,
-      },
-    });
+    try {
+      const userExists = await User.findOne({
+        where: {
+          email: req.body.email,
+        },
+      });
 
-    if (userExists) {
-      return res.status(400).json({ error: 'Email has been already used' });
+      if (userExists) {
+        return res.status(400).json({ error: 'Email has been already used' });
+      }
+
+      const { id, name, email, avatar_name } = await User.create(req.body);
+
+      return res.status(201).json({ id, name, email, avatar_name });
+    } catch (err) {
+      return res.status(500).json({ error: 'Internal server error' });
     }
-
-    const { id, name, email, avatar_name } = await User.create(req.body);
-
-    return res.status(201).json({ id, name, email, avatar_name });
   }
 
   async index(req, res) {
@@ -63,10 +67,6 @@ class UserController {
   }
 
   async update(req, res) {
-    if (Number(req.params.id) !== Number(req.userId)) {
-      return res.status(400).json('Invalid id');
-    }
-
     const schemaNameEmail = Yup.object().shape({
       name: Yup.string().min(2),
       email: Yup.string()
@@ -92,27 +92,31 @@ class UserController {
       return res.status(400).json({ error: "Password's validation failed" });
     }
 
-    const user = await User.findByPk(req.params.id);
+    try {
+      const user = await User.findByPk(req.userId);
 
-    const passwordToCheck = req.body.oldPassword
-      ? req.body.oldPassword
-      : req.body.password;
+      const passwordToCheck = req.body.oldPassword
+        ? req.body.oldPassword
+        : req.body.password;
 
-    if (!(await user.checkPassword(passwordToCheck))) {
-      return res.status(401).json({ error: 'Invalid password' });
+      if (!(await user.checkPassword(passwordToCheck))) {
+        return res.status(401).json({ error: 'Invalid password' });
+      }
+
+      if (
+        req.body.email &&
+        !(user.email === req.body.email) &&
+        (await User.findOne({ where: { email: req.body.email } }))
+      ) {
+        return res.status(400).json({ error: 'Email already exists' });
+      }
+
+      const { id, name, email, avatar_name } = await user.update(req.body);
+
+      return res.json({ user: { id, name, email, avatar_name } });
+    } catch (err) {
+      return res.status(500).json({ error: 'Internal server error' });
     }
-
-    if (
-      req.body.email &&
-      !(user.email === req.body.email) &&
-      (await User.findOne({ where: { email: req.body.email } }))
-    ) {
-      return res.status(400).json({ error: 'Email already exists' });
-    }
-
-    const { id, name, email, avatar_name } = await user.update(req.body);
-
-    return res.json({ id, name, email, avatar_name });
   }
 }
 
