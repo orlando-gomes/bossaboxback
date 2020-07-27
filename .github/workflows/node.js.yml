@@ -25,4 +25,5 @@ jobs:
           git pull origin master
           npm install
           npx sequelize db:migrate
+          npm run build
           pm2 restart server
