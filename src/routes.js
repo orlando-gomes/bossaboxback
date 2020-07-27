@@ -17,7 +17,7 @@ routes.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 routes.get('/', (req, res) => {
   return res
     .status(204)
-    .json({ msg: 'Bossaboxback on news server operating 100%!' });
+    .json({ msg: 'Bossaboxback on new server operating 100%!' });
 });
 
 routes.post('/users', UserController.store);
