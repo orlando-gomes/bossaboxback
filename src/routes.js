@@ -11,33 +11,34 @@ import TagController from './app/controllers/TagController';
 import ToolController from './app/controllers/ToolController';
 
 const routes = new Router();
+const addPath = process.env.NODE_ENV === 'production' ? '/bossaboxback' : '';
 
 routes.use(
-  '/bossaboxback/api-docs',
+  `${addPath}/api-docs`,
   swaggerUi.serve,
   swaggerUi.setup(swaggerDocument)
 );
 
-routes.get('/bossaboxback/', (req, res) => {
+routes.get('/', (req, res) => {
   return res.json({
     msg: 'Bossaboxback on new server operating 100% with CI/CD!',
   });
 });
 
-routes.post('/bossaboxback/users', UserController.store);
-routes.post('/bossaboxback/sessions', SessionController.store);
+routes.post('/users', UserController.store);
+routes.post('/sessions', SessionController.store);
 
 routes.use(authMiddleware);
 
-routes.get('/bossaboxback/users', UserController.index);
-routes.get('/bossaboxback/users/:id', UserController.show);
-routes.put('/bossaboxback/users', UserController.update);
+routes.get('/users', UserController.index);
+routes.get('/users/:id', UserController.show);
+routes.put('/users', UserController.update);
 
-routes.get('/bossaboxback/tags', TagController.index);
+routes.get('/tags', TagController.index);
 
-routes.get('/bossaboxback/tools', ToolController.index);
-routes.get('/bossaboxback/tools/:id', ToolController.show);
-routes.post('/bossaboxback/tools/', ToolController.store);
-routes.delete('/bossaboxback/tools/:id', ToolController.delete);
+routes.get('/tools', ToolController.index);
+routes.get('/tools/:id', ToolController.show);
+routes.post('/tools/', ToolController.store);
+routes.delete('/tools/:id', ToolController.delete);
 
 export default routes;
