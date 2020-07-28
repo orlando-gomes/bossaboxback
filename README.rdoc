@@ -1,6 +1,7 @@
 - Para acessar a documentação, inicial o servidor e usar a
   url "http://localhost:3000/api-docs/" no navegador da sua
   preferência;
+- Abrir o file .env e mudar a variável global NODE_ENV para development
 - Criar base de dados no postgres com a seguinte configuração:
   - username: 'postgres' (padrào)
   - password: 'docker'

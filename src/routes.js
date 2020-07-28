@@ -19,26 +19,26 @@ routes.use(
   swaggerUi.setup(swaggerDocument)
 );
 
-routes.get('/', (req, res) => {
+routes.get(`${addPath}/`, (req, res) => {
   return res.json({
     msg: 'Bossaboxback on new server operating 100% with CI/CD!',
   });
 });
 
-routes.post('/users', UserController.store);
-routes.post('/sessions', SessionController.store);
+routes.post(`${addPath}/users`, UserController.store);
+routes.post(`${addPath}/sessions`, SessionController.store);
 
 routes.use(authMiddleware);
 
-routes.get('/users', UserController.index);
-routes.get('/users/:id', UserController.show);
-routes.put('/users', UserController.update);
+routes.get(`${addPath}/users`, UserController.index);
+routes.get(`${addPath}/users/:id`, UserController.show);
+routes.put(`${addPath}/users`, UserController.update);
 
-routes.get('/tags', TagController.index);
+routes.get(`${addPath}/tags`, TagController.index);
 
-routes.get('/tools', ToolController.index);
-routes.get('/tools/:id', ToolController.show);
-routes.post('/tools/', ToolController.store);
-routes.delete('/tools/:id', ToolController.delete);
+routes.get(`${addPath}/tools`, ToolController.index);
+routes.get(`${addPath}/tools/:id`, ToolController.show);
+routes.post(`${addPath}/tools`, ToolController.store);
+routes.delete(`${addPath}/tools/:id`, ToolController.delete);
 
 export default routes;
