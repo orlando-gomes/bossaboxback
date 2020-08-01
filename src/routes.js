@@ -11,6 +11,8 @@ import TagController from './app/controllers/TagController';
 import ToolController from './app/controllers/ToolController';
 
 const routes = new Router();
+
+// that's for online server mapping by nginx
 const addPath = process.env.NODE_ENV === 'production' ? '/bossaboxback' : '';
 
 routes.use(

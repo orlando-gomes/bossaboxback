@@ -2,6 +2,8 @@ import './bootstrap';
 
 import express from 'express';
 
+import cors from 'cors';
+
 import routes from './routes';
 
 import './database/databaseLoader';
@@ -17,6 +19,18 @@ class App {
 
   middlewares() {
     this.server.use(express.json());
+
+    // Para conformidade com a politica de CORS dos navegadores
+    if (process.env.NODE_ENV === 'production') {
+      this.server.use(
+        cors({ origin: 'https://modest-hodgkin-38008e.netlify.app' })
+      );
+    } else {
+      this.server.use(cors());
+    }
+
+    // Em ambiente de produção, poderíamos setar
+    // this.server.use(cors({ origin: 'https://meudominio.com.br' }));
   }
 
   routes() {
