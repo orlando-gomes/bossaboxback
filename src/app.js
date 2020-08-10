@@ -28,9 +28,6 @@ class App {
     } else {
       this.server.use(cors());
     }
-
-    // Em ambiente de produção, poderíamos setar
-    // this.server.use(cors({ origin: 'https://meudominio.com.br' }));
   }
 
   routes() {
@@ -40,7 +37,7 @@ class App {
 
 export default new App().server;
 
-/* sem https
+/* sem https local
 import './bootstrap';
 
 import express from 'express';
@@ -84,7 +81,7 @@ class App {
 export default new App().server;
 */
 
-/* HTTPS
+/* com HTTPS local
 import './bootstrap';
 
 import express from 'express';

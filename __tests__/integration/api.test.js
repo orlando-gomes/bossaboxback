@@ -28,7 +28,7 @@ const authUser1 = async () => {
       password: '123456',
     });
 
-  return responseUserAuth.body.user.token;
+  return responseUserAuth.body.token;
 };
 
 describe('Tag', () => {
@@ -52,6 +52,20 @@ describe('Tag', () => {
       .set('Authorization', `Bearer ${userToken}`);
 
     expect(response.body.length).toBe(4);
+  });
+
+  it('should get response status(401) - unauthorized', async () => {
+    const response = await request(app).get('/tags');
+
+    expect(response.status).toBe(401);
+  });
+
+  it('should also get response status(401) - unauthorized', async () => {
+    const response = await request(app)
+      .get('/tags')
+      .set('Authorization', `Bearer whatever`);
+
+    expect(response.status).toBe(401);
   });
 });
 
@@ -128,7 +142,7 @@ describe('User', () => {
         password: '123456',
       });
 
-    expect(response.body).toHaveProperty('user.token');
+    expect(response.body).toHaveProperty('token');
   });
 
   it('should get response status(400) - authenticate without email', async () => {
@@ -215,7 +229,7 @@ describe('User', () => {
         password: '123456',
       });
 
-    const user1Token = response1.body.user.token;
+    const user1Token = response1.body.token;
 
     await request(app)
       .post('/users')
@@ -258,7 +272,7 @@ describe('User', () => {
         password: '123456',
       });
 
-    const user1Token = responseUser1Auth.body.user.token;
+    const user1Token = responseUser1Auth.body.token;
 
     await request(app)
       .post('/users')
@@ -301,7 +315,7 @@ describe('User', () => {
         password: '123456',
       });
 
-    const user1Token = responseUser1Auth.body.user.token;
+    const user1Token = responseUser1Auth.body.token;
 
     const response = await request(app)
       .get(`/users/${user1Id + 10}`)
@@ -311,38 +325,6 @@ describe('User', () => {
   });
 
   it("should be able to update an user's name", async () => {
-    const responseUser1Save = await request(app)
-      .post('/users')
-      .send({
-        name: 'UserTest1',
-        email: 'usertest1@gmail.com',
-        password: '123456',
-      });
-
-    const user1Id = responseUser1Save.body.id;
-
-    const responseUser1Auth = await request(app)
-      .post('/sessions')
-      .send({
-        email: 'usertest1@gmail.com',
-        password: '123456',
-      });
-
-    const user1Token = responseUser1Auth.body.user.token;
-
-    const response = await request(app)
-      .put(`/users/${user1Id}`)
-      .set('Authorization', `Bearer ${user1Token}`)
-      .send({
-        name: 'UserTest22',
-        email: 'usertest1@gmail.com',
-        password: '123456',
-      });
-
-    expect(response.body.name).toBe('UserTest22');
-  });
-
-  it('should get response status(400) - Invalid id in update user', async () => {
     await request(app)
       .post('/users')
       .send({
@@ -351,16 +333,6 @@ describe('User', () => {
         password: '123456',
       });
 
-    const responseUser2Save = await request(app)
-      .post('/users')
-      .send({
-        name: 'UserTest2',
-        email: 'usertest2@gmail.com',
-        password: '123456',
-      });
-
-    const user2Id = responseUser2Save.body.id;
-
     const responseUser1Auth = await request(app)
       .post('/sessions')
       .send({
@@ -368,10 +340,10 @@ describe('User', () => {
         password: '123456',
       });
 
-    const user1Token = responseUser1Auth.body.user.token;
+    const user1Token = responseUser1Auth.body.token;
 
     const response = await request(app)
-      .put(`/users/${user2Id}`)
+      .put(`/users`)
       .set('Authorization', `Bearer ${user1Token}`)
       .send({
         name: 'UserTest22',
@@ -379,19 +351,17 @@ describe('User', () => {
         password: '123456',
       });
 
-    expect(response.status).toBe(400);
+    expect(response.body.user.name).toBe('UserTest22');
   });
 
   it('should get response status(400) - Name and email required in update user', async () => {
-    const responseUser1Save = await request(app)
+    await request(app)
       .post('/users')
       .send({
         name: 'UserTest1',
         email: 'usertest1@gmail.com',
         password: '123456',
       });
-
-    const user1Id = responseUser1Save.body.id;
 
     const responseUser1Auth = await request(app)
       .post('/sessions')
@@ -400,10 +370,10 @@ describe('User', () => {
         password: '123456',
       });
 
-    const user1Token = responseUser1Auth.body.user.token;
+    const user1Token = responseUser1Auth.body.token;
 
     const response = await request(app)
-      .put(`/users/${user1Id}`)
+      .put(`/users`)
       .set('Authorization', `Bearer ${user1Token}`)
       .send({
         name: 'U',
@@ -415,15 +385,13 @@ describe('User', () => {
   });
 
   it('should get response status(400) - Password validation failed in update user', async () => {
-    const responseUser1Save = await request(app)
+    await request(app)
       .post('/users')
       .send({
         name: 'UserTest1',
         email: 'usertest1@gmail.com',
         password: '123456',
       });
-
-    const user1Id = responseUser1Save.body.id;
 
     const responseUser1Auth = await request(app)
       .post('/sessions')
@@ -432,10 +400,10 @@ describe('User', () => {
         password: '123456',
       });
 
-    const user1Token = responseUser1Auth.body.user.token;
+    const user1Token = responseUser1Auth.body.token;
 
     const response = await request(app)
-      .put(`/users/${user1Id}`)
+      .put(`/users`)
       .set('Authorization', `Bearer ${user1Token}`)
       .send({
         name: 'UUserTest22',
@@ -447,15 +415,13 @@ describe('User', () => {
   });
 
   it('should get response status(401) - Invalid password in update user', async () => {
-    const responseUser1Save = await request(app)
+    await request(app)
       .post('/users')
       .send({
         name: 'UserTest1',
         email: 'usertest1@gmail.com',
         password: '123456',
       });
-
-    const user1Id = responseUser1Save.body.id;
 
     const responseUser1Auth = await request(app)
       .post('/sessions')
@@ -464,10 +430,10 @@ describe('User', () => {
         password: '123456',
       });
 
-    const user1Token = responseUser1Auth.body.user.token;
+    const user1Token = responseUser1Auth.body.token;
 
     const response = await request(app)
-      .put(`/users/${user1Id}`)
+      .put(`/users`)
       .set('Authorization', `Bearer ${user1Token}`)
       .send({
         name: 'UUserTest22',
@@ -479,15 +445,13 @@ describe('User', () => {
   });
 
   it('should get response status(400) - Email already exists in update user', async () => {
-    const responseUser1Save = await request(app)
+    await request(app)
       .post('/users')
       .send({
         name: 'UserTest1',
         email: 'usertest1@gmail.com',
         password: '123456',
       });
-
-    const user1Id = responseUser1Save.body.id;
 
     const responseUser1Auth = await request(app)
       .post('/sessions')
@@ -496,7 +460,7 @@ describe('User', () => {
         password: '123456',
       });
 
-    const user1Token = responseUser1Auth.body.user.token;
+    const user1Token = responseUser1Auth.body.token;
 
     await request(app)
       .post('/users')
@@ -507,7 +471,7 @@ describe('User', () => {
       });
 
     const response = await request(app)
-      .put(`/users/${user1Id}`)
+      .put(`/users`)
       .set('Authorization', `Bearer ${user1Token}`)
       .send({
         name: 'UUserTest22',
@@ -519,15 +483,13 @@ describe('User', () => {
   });
 
   it("should be able to update an user's password", async () => {
-    const responseUser1Save = await request(app)
+    await request(app)
       .post('/users')
       .send({
         name: 'UserTest1',
         email: 'usertest1@gmail.com',
         password: '123456',
       });
-
-    const user1Id = responseUser1Save.body.id;
 
     const responseUser1Auth = await request(app)
       .post('/sessions')
@@ -536,10 +498,10 @@ describe('User', () => {
         password: '123456',
       });
 
-    const user1Token = responseUser1Auth.body.user.token;
+    const user1Token = responseUser1Auth.body.token;
 
     const response = await request(app)
-      .put(`/users/${user1Id}`)
+      .put(`/users`)
       .set('Authorization', `Bearer ${user1Token}`)
       .send({
         name: 'UserTest1',
@@ -691,6 +653,11 @@ describe('Tool', () => {
         description: 'Uma API para conhecimento do seu time de futebol',
         tags: ['Node', 'Express', 'Futebol', 'Time'],
       });
+
+    // this double request is for testing caching
+    await request(app)
+      .get('/tools')
+      .set('Authorization', `Bearer ${userToken}`);
 
     const response = await request(app)
       .get('/tools')

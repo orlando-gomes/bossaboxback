@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import myCache from '../services/cache';
 
 import Tool from '../models/Tool';
 import Tag from '../models/Tag';
@@ -77,6 +78,8 @@ class ToolController {
         })
       );
 
+      myCache.del('allTools');
+
       return res.json({ id, title, link, description, tags });
     } catch (err) {
       return res.status(500).json({ error: 'Internal server error' });
@@ -85,6 +88,10 @@ class ToolController {
 
   // eslint-disable-next-line consistent-return
   async index(req, res) {
+    // console.log('busca de ferramentas - NODE_ENV=development!!!');
+    // setTimeout(async () => {
+    // ////////////////////////////////////
+
     try {
       let wantedTools = [];
 
@@ -115,6 +122,12 @@ class ToolController {
         );
       } else {
         // If we're not seraching by tag
+        const fetchToolsFromCache = myCache.get('allTools');
+        if (fetchToolsFromCache !== undefined) {
+          // console.log('Sending from cache');
+          return res.json(fetchToolsFromCache);
+        }
+
         wantedTools = await Tool.findAll({
           attributes: ['id', 'title', 'link', 'description'],
         });
@@ -129,10 +142,18 @@ class ToolController {
         })
       );
 
+      // Caching only complete searchs
+      if (!searchingByTag) {
+        // console.log('Caching');
+        myCache.set('allTools', wantedToolsWithTags, 60 * 5);
+      }
+
       return res.json(wantedToolsWithTags);
     } catch (err) {
       return res.status(500).json({ error: 'Internal server error' });
     }
+    // ////////////////////////////////////
+    // }, 3000);
   }
 
   async show(req, res) {
@@ -158,7 +179,9 @@ class ToolController {
 
     tool.destroy();
 
-    TooltagServices.purgeTagTable();
+    await TooltagServices.purgeTagTable();
+
+    myCache.del('allTools');
 
     return res.status(204).json({ msg: 'Deleted' });
   }

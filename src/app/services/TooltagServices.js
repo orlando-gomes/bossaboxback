@@ -44,7 +44,7 @@ class TooltagServices {
           tag.destroy();
         }
       })
-    );
+    ).catch(() => {});
   }
 }
 
