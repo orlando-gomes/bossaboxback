@@ -121,7 +121,7 @@ class ToolController {
           })
         );
       } else {
-        // If we're not seraching by tag
+        // If we're not searching by tag
         const fetchToolsFromCache = myCache.get('allTools');
         if (fetchToolsFromCache !== undefined) {
           // console.log('Sending from cache');

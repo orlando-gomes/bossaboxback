@@ -92,6 +92,58 @@
             "description": "Internal server error"
           }
         }
+      },
+      "put": {
+        "tags": [
+          "authUsers"
+        ],
+        "summary": "Updates an user (name, email, password)",
+        "operationId": "updateUser",
+        "description": "An user can update his/her own data. If oldPassword field is filled, API will save password as the new one.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "none",
+            "description": "No parameter is required"
+          },
+          {
+            "in": "body",
+            "name": "user",
+            "description": "New user's data. User can either update name and email or name, email and password. The first case you send an object {name(optional), email(optional), password}. API will check for password and save data. The second case you send an object {name(optional), email(optional), oldPassword, password, confirmPassword}. API will check for the oldPassword and save the password field as the new password",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/userPutRes"
+                },
+                {
+                  "$ref": "#/definitions/userPutReq"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/userPutRes"
+            }
+          },
+          "400": {
+            "description": "Bad request. Invalid id. Name and email are required. Password's validation failed. Email already exists."
+          },
+          "401": {
+            "description": "Unauthorized (User not logged in), Invalid password"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
       }
     },
     "/users:id":{
@@ -129,59 +181,6 @@
               "description": "Internal server error"
             }
           }
-      },
-      "put": {
-        "tags": [
-          "authUsers"
-        ],
-        "summary": "Updates an user (name, email, password)",
-        "operationId": "updateUser",
-        "description": "An user can update his/her own data. If oldPassword field is filled, API will save password as the new one.",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "description": "The user's id"
-          },
-          {
-            "in": "body",
-            "name": "user",
-            "description": "New user's data. User can either update name and email or name, email and password. The first case you send an object {name(optional), email(optional), password}. API will check for password and save data. The second case you send an object {name(optional), email(optional), oldPassword, password, confirmPassword}. API will check for the oldPassword and save the password field as the new password",
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/definitions/userPutRes"
-                },
-                {
-                  "$ref": "#/definitions/userPutReq"
-                }
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/userPutRes"
-            }
-          },
-          "400": {
-            "description": "Bad request. Invalid id. Name and email are required. Password's validation failed. Email already exists."
-          },
-          "401": {
-            "description": "Unauthorized (User not logged in), Invalid password"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
       }
     },
     "/sessions": {
