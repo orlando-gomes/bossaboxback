@@ -23,7 +23,8 @@ routes.use(
 
 routes.get(`${addPath}/`, (req, res) => {
   return res.json({
-    msg: 'Bossaboxback on new server operating 100% with CI/CD!',
+    msg:
+      'Bossaboxback on new server operating 100% with CI/CD! Showing for movie!!!',
   });
 });
 

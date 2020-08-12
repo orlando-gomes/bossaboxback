@@ -3,6 +3,7 @@
   preferência;
 - Para acessar a documentação da API hospedada online, visitar
   a url https://www.orlstechbacks.com/bossaboxback/api-docs/
+
 - Abrir o file .env e mudar a variável global NODE_ENV para development
 - Criar base de dados no postgres com a seguinte configuração:
   - username: 'postgres' (padrào)
